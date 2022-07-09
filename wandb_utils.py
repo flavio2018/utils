@@ -30,3 +30,11 @@ def log_preds_and_targets(batch_i, output, targets):
         data = [list(row) for row in data]
         table = wandb.Table(data=data, columns=columns)
         wandb.log({"First batch preds vs targets": table})
+
+
+def log_config(cfg_dict):
+    for subconfig_name, subconfig_values in cfg_dict.items():
+        if isinstance(subconfig_values, dict):
+            wandb.config.update(subconfig_values)
+        else:
+            logging.warning(f"{subconfig_name} is not being logged.")
