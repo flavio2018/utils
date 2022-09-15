@@ -51,11 +51,11 @@ def configure_reproducibility(seed):
     torch.cuda.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
 
-    torch.backends.cudnn.enabled = False
+    torch.backends.cudnn.enabled = cfg.run.cudnn
     torch.backends.cudnn.benchmark = False
-    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.deterministic = cfg.run.deterministic
 
-    torch.use_deterministic_algorithms(mode=True) #, warn_only=True)
+    torch.use_deterministic_algorithms(mode=cfg.run.deterministic) #, warn_only=True)
 
     return rng
 
