@@ -26,7 +26,7 @@ def get_str_timestamp():
     return datetime.now().strftime("%Y%B%d_%H-%M-%S")
 
 
-def configure_reproducibility(seed):
+def configure_reproducibility(cfg):
     """This is to try and ensure reproducibility, although it is known that it cannot be fully ensured across different
     PyTorch versions, CUDA and cuDNN versions and systems.
 
@@ -40,16 +40,16 @@ def configure_reproducibility(seed):
     - https://discuss.pytorch.org/t/random-seed-initialization/7854/18
     - https://pytorch.org/docs/stable/notes/randomness.html
     """
-    np.random.seed(seed)
-    random.seed(seed)
-    torch.manual_seed(seed)
+    np.random.seed(cfg.run.seed)
+    random.seed(cfg.run.seed)
+    torch.manual_seed(cfg.run.seed)
 
     rng = torch.Generator()
-    rng.manual_seed(seed)
+    rng.manual_seed(cfg.run.seed)
 
     # if you are using GPU
-    torch.cuda.manual_seed(seed)
-    torch.cuda.manual_seed_all(seed)
+    torch.cuda.manual_seed(cfg.run.seed)
+    torch.cuda.manual_seed_all(cfg.run.seed)
 
     torch.backends.cudnn.enabled = cfg.run.cudnn
     torch.backends.cudnn.benchmark = False
