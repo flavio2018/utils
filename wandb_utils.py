@@ -38,3 +38,19 @@ def log_config(cfg_dict):
             wandb.config.update(subconfig_values)
         else:
             logging.warning(f"{subconfig_name} is not being logged.")
+
+
+def log_mem_stats(model):
+    wandb.log({
+            "memory_reading/min": model.memory_reading.min(),
+            "memory_reading/max": model.memory_reading.max(),
+            "memory_reading/2norm": torch.norm(model.memory_reading, 2),
+        })
+
+def log_params_norm(model):
+    wandb.log({
+            f"params_norm/{param_name}": torch.norm(param)
+            for param_name, param in model.named_parameters()
+        })
+
+
