@@ -3,12 +3,15 @@ import wandb
 import torch
 
 
-def log_weights_gradient(model):
+def log_weights_gradient(model, step):
     for param_name, param in model.named_parameters():
         if param.grad is not None:
             # wandb.log({f"hist_gradient/{param_name}": wandb.Histogram(param.grad.cpu())})
             norm = torch.norm(param.grad.detach(), 2)
-            wandb.log({f"norm2_gradient/{param_name}": norm})
+            wandb.log({
+                f"norm2_gradient/{param_name}": norm,
+                "step": step,
+                })
         else:
             logging.warning(f"{param_name} gradient is None!")
     # code adapted from https://pytorch.org/docs/stable/_modules/torch/nn/utils/clip_grad.html#clip_grad_norm_
@@ -20,7 +23,10 @@ def log_weights_gradient(model):
     norm_type = float(norm_type)
     device = parameters[0].grad.device
     total_norm = torch.norm(torch.stack([torch.norm(p.grad.detach(), norm_type).to(device) for p in parameters]), norm_type)
-    wandb.log({f"norm2_gradient/global": total_norm})
+    wandb.log({
+        f"norm2_gradient/global": total_norm,
+        "step": step,
+        })
 
 def log_preds_and_targets(batch_i, output, targets):
     if batch_i == 0:
@@ -40,17 +46,19 @@ def log_config(cfg_dict):
             logging.warning(f"{subconfig_name} is not being logged.")
 
 
-def log_mem_stats(model):
+def log_mem_stats(model, step):
     wandb.log({
             "memory_reading/min": model.memory_reading.min(),
             "memory_reading/max": model.memory_reading.max(),
             "memory_reading/2norm": torch.norm(model.memory_reading, 2),
+            "step": step,
         })
 
-def log_params_norm(model):
-    wandb.log({
-            f"params_norm/{param_name}": torch.norm(param)
-            for param_name, param in model.named_parameters()
-        })
+def log_params_norm(model, step):
+    for param_name, param in model.named_parameters():
+        wandb.log({
+                f"params_norm/{param_name}": torch.norm(param),
+                "step": step,
+            })
 
 
