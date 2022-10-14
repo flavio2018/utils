@@ -50,6 +50,11 @@ def get_hidden_mask(lens, h_size, device):
 		[torch.zeros((1, h_size), device=device) if m == 0 else torch.ones((1, h_size), device=device) for m in mask_1d],
 		dim=0)
 
+def get_reading_mask(mask_1d, mem_size, device):
+    return torch.concat(
+    	[torch.zeros((1, mem_size), device=device) if m == 0 else torch.ones((1, mem_size), device=device) for m in mask_1d],
+    	dim=0)
+
 
 def save_states(model, h_dict, c_dict, samples_len):
 	"""Util used to save states of a recurrent model corresponding to the last
@@ -59,3 +64,10 @@ def save_states(model, h_dict, c_dict, samples_len):
 		h_dict.setdefault(state.item(), model.h_t[state, :])
 		c_dict.setdefault(state.item(), model.c_t[state, :])
 	return h_dict, c_dict
+
+
+def save_states_dntm(model, h_dict, samples_len):
+    target_states = torch.argwhere(get_mask(samples_len) == 0)
+    for state in target_states:
+        h_dict.setdefault(state.item(), model.controller_hidden_state[:, state])  # transposed shape
+    return h_dict
