@@ -35,7 +35,7 @@ def reduce_lens(lens):
 	return [l-1 if l > 0 else l for l in lens]
 
 
-def get_mask(lens, device):
+def get_mask(lens, device='cpu'):
 	"""Given a list of lengths of sequences, create a tensor mask that signals
 	the sequences that reached padded positions."""
 	return torch.tensor([1 if l > 0 else 0 for l in lens], device=device)
