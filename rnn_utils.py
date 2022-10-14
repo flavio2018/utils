@@ -35,17 +35,19 @@ def reduce_lens(lens):
 	return [l-1 if l > 0 else l for l in lens]
 
 
-def get_mask(lens):
+def get_mask(lens, device):
 	"""Given a list of lengths of sequences, create a tensor mask that signals
 	the sequences that reached padded positions."""
-	return torch.tensor([1 if l > 0 else 0 for l in lens])
+	return torch.tensor([1 if l > 0 else 0 for l in lens], device=device)
 
 
-def get_hidden_mask(mask_1d, h_size):
+def get_hidden_mask(mask_1d, h_size, device=device):
 	"""Given a mask for a position in a batch of sequences, produce a mask for
 	the batch of hidden states of a recurrent network to be used to process the
 	elements in the batch in the current position."""
-	return torch.concat([torch.zeros((1, h_size)) if m == 0 else torch.ones((1, h_size)) for m in mask_1d], dim=0)
+	return torch.concat(
+		[torch.zeros((1, h_size), device=device) if m == 0 else torch.ones((1, h_size), device=device) for m in mask_1d],
+		dim=0)
 
 
 def save_states(model, h_dict, c_dict, samples_len):
