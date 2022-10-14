@@ -21,7 +21,7 @@ def make_tensor(sample, token2pos, vocab_size):
 	return torch.concat(sample_tensor).unsqueeze(dim=0)
 
 
-def make_padded_batch(tensors, lens):
+def make_padded_batch(tensors, lens, vocab_size):
 	"""Given a batch of sequences represented as tensors and a list containing
 	their lengths, pads the sequences with zeros and builds a batch."""
 	padded_tensors = [torch.concat((t, torch.zeros((1, max(lens)-l, vocab_size))), dim=1)
