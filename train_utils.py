@@ -7,8 +7,3 @@ def get_optimizer(model, cfg):
         return torch.optim.RMSprop(model.parameters(), lr=cfg.train.lr)
     else:
         return torch.optim.Adam(model.parameters(), lr=cfg.train.lr)
-
-def print_if_nan(x):
-    if torch.isnan(x).any():
-        print("NaN found!")
-        print(x)
