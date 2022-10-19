@@ -62,3 +62,27 @@ def log_params_norm(model, step):
             })
 
 
+def log_buffers_norm(model, step):
+    for buffer_name, buffer in model.named_buffers():
+        wandb.log({
+                f"buffers_norm/{buffer_name}": torch.norm(buffer),
+                "step": step
+            })
+
+
+def log_intermediate_values_norm(model, step):
+        wandb.log({
+                "q": torch.norm(model.memory.query),
+                "beta": torch.norm(model.memory.sharpening_beta),
+                "w_tilde": torch.norm(model.memory.similarity_vector),
+                "gamma": torch.norm(model.memory.lru_gamma),
+                "w_hat": torch.norm(model.memory.lru_similarity_vector),
+                "v": torch.norm(model.memory.exp_mov_avg_similarity),
+                "w_r": torch.norm(model.memory.read_weights),
+                "w_w": torch.norm(model.memory.write_weights),
+                "e": torch.norm(model.memory.erase_vector),
+                "alpha": torch.norm(model.memory.alpha),
+                "c": torch.norm(model.memory.candidate_content_vector),
+                "M_c": torch.norm(model.memory.memory_contents),
+                "step": step
+            })
