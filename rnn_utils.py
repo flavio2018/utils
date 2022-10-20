@@ -51,9 +51,9 @@ def get_hidden_mask(lens, h_size, device):
 		dim=0)
 
 def get_reading_mask(mask_1d, mem_size, device):
-    return torch.concat(
-    	[torch.zeros((1, mem_size), device=device) if m == 0 else torch.ones((1, mem_size), device=device) for m in mask_1d],
-    	dim=0)
+	return torch.concat(
+		[torch.zeros((1, mem_size), device=device) if m == 0 else torch.ones((1, mem_size), device=device) for m in mask_1d],
+		dim=0)
 
 
 def save_states(model, h_dict, c_dict, samples_len):
@@ -67,18 +67,27 @@ def save_states(model, h_dict, c_dict, samples_len):
 
 
 def save_states_dntm(model, h_dict, samples_len):
-    target_states = torch.argwhere(get_mask(samples_len) == 0)
-    for state in target_states:
-        h_dict.setdefault(state.item(), model.controller_hidden_state[:, state])  # transposed shape
-    return h_dict
+	target_states = torch.argwhere(get_mask(samples_len) == 0)
+	for state in target_states:
+		h_dict.setdefault(state.item(), model.controller_hidden_state[:, state])  # transposed shape
+	return h_dict
 
 
 def populate_first_output(output, samples_len, first_output):
-    for pos, seq_len in enumerate(samples_len):
-        if seq_len == 0:
-            first_output.setdefault(pos, output[pos, :].unsqueeze(dim=0))
-    return first_output
+	for pos, seq_len in enumerate(samples_len):
+		if seq_len == 0:
+			first_output.setdefault(pos, output[pos, :].unsqueeze(dim=0))
+	return first_output
 
 
 def build_first_output(first_output):
-    return torch.concat([output for output in first_output.values()], dim=0)
+	return torch.concat([output for output in first_output.values()], dim=0)
+
+
+def batch_acc(outputs, target, loss_masks):
+    masked_outputs = torch.concat(
+        [(output.argmax(1)*mask).unsqueeze(1) for output, mask in zip(outputs, loss_masks)], dim=1)
+    not_valid_outputs = (masked_outputs == 0).sum()
+    valid_outputs = (masked_outputs != 0).sum()
+    outputs_equal_to_targets = (masked_outputs == target.argmax(2)).sum()
+    return (outputs_equal_to_targets - not_valid_outputs)/valid_outputs
