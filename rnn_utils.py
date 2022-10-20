@@ -71,3 +71,14 @@ def save_states_dntm(model, h_dict, samples_len):
     for state in target_states:
         h_dict.setdefault(state.item(), model.controller_hidden_state[:, state])  # transposed shape
     return h_dict
+
+
+def populate_first_output(output, samples_len, first_output):
+    for pos, seq_len in enumerate(samples_len):
+        if seq_len == 0:
+            first_output.setdefault(pos, output[pos, :].unsqueeze(dim=0))
+    return first_output
+
+
+def build_first_output(first_output):
+    return torch.concat([output for output in first_output.values()], dim=0)
