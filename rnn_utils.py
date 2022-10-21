@@ -87,7 +87,7 @@ def build_first_output(first_output):
 def batch_acc(outputs, target, loss_masks):
     masked_outputs = torch.concat(
         [(output.argmax(1)*mask).unsqueeze(1) for output, mask in zip(outputs, loss_masks)], dim=1)
-    not_valid_outputs = (masked_outputs == 0).sum()
-    valid_outputs = (masked_outputs != 0).sum()
+    not_valid_outputs = sum([sum(mask == False) for mask in loss_masks])
+    valid_outputs = sum([sum(mask == True) for mask in loss_masks])
     outputs_equal_to_targets = (masked_outputs == target.argmax(2)).sum()
     return (outputs_equal_to_targets - not_valid_outputs)/valid_outputs
