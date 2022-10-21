@@ -93,6 +93,17 @@ def batch_acc(outputs, target, loss_masks):
     return (outputs_equal_to_targets - not_valid_outputs)/valid_outputs
 
 
+def get_token2pos(vocab_chars):
+	token2pos = {t: p for p, t in enumerate(vocab_chars)}
+	token2pos['\n'] = len(token2pos)
+	return token2pos
+
+
+def get_pos2token(vocab_chars):
+	token2pos = get_token2pos(vocab_chars)
+	return {p: t for t, p in token2pos.items()}
+
+
 def target_tensors_to_str(y_t):
 	pos2token = get_pos2token()
 	idx_outputs = [torch.argmax(o).item() for o in y_t]
