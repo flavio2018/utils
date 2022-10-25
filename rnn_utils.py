@@ -61,8 +61,13 @@ def save_states(model, h_dict, c_dict, samples_len):
 	element of each sequence in a batch."""
 	target_states = torch.argwhere(get_mask(samples_len) == 0)
 	for state in target_states:
-		h_dict.setdefault(state.item(), model.h_t_1[state, :])
-		c_dict.setdefault(state.item(), model.c_t_1[state, :])
+		h_dict[1].setdefault(state.item(), model.h_t_1[state, :])
+		c_dict[1].setdefault(state.item(), model.c_t_1[state, :])
+		try:
+			h_dict[2].setdefault(state.item(), model.h_t_2[state, :])
+			c_dict[2].setdefault(state.item(), model.c_t_2[state, :])
+		except AttributeError:
+			pass
 	return h_dict, c_dict
 
 
