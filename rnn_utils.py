@@ -89,10 +89,14 @@ def build_first_output(first_output):
 	return torch.concat([output for output in first_output.values()], dim=0)
 
 
-def batch_acc(outputs, target, loss_masks):
-    masked_outputs = torch.concat(
-        [(output.argmax(1)*mask).unsqueeze(1) for output, mask in zip(outputs, loss_masks)], dim=1)
-    not_valid_outputs = sum([sum(mask == False) for mask in loss_masks])
-    valid_outputs = sum([sum(mask == True) for mask in loss_masks])
-    outputs_equal_to_targets = (masked_outputs == target.argmax(2)).sum()
-    return (outputs_equal_to_targets - not_valid_outputs)/valid_outputs
+def batch_acc(outputs, targets, vocab_size):
+    idx_pad = vocab_size - 1
+    idx_targets = targets.argmax(dim=-1)
+    mask = (idx_targets != idx_pad).type(torch.int32)
+    tensor_outs = torch.concat([o.unsqueeze(1) for o in outputs], dim=1)
+    idx_outs = tensor_outs.argmax(dim=-1)
+    out_equal_target = (idx_outs == idx_targets).type(torch.int32)
+    masked_out_equal_target = out_equal_target * mask
+    num_masked = (mask == 0).sum()
+    num_targets = idx_targets.size(0) * idx_targets.size(1)
+    return masked_out_equal_target.sum() / (num_targets - num_masked)
