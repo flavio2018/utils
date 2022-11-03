@@ -21,6 +21,17 @@ def make_tensor(sample, token2pos, vocab_size):
 	return torch.concat(sample_tensor).unsqueeze(dim=0)
 
 
+def make_target_tensor(target, token2pos, vocab_size):
+    """Given a target sequence, vocabulary size and a dictionary associating each
+    char to an index, builds a tensor representation of the target sequence."""
+    target_tensor = []
+    target_tensor.append(make_1hot('sos', token2pos, vocab_size))
+    for c in target:
+        target_tensor.append(make_1hot(c, token2pos, vocab_size))
+    target_tensor.append(make_1hot('eos', token2pos, vocab_size))
+    return torch.concat(target_tensor).unsqueeze(dim=0)
+
+
 def make_padded_batch(tensors, lens, vocab_size):
 	"""Given a batch of sequences represented as tensors and a list containing
 	their lengths, pads the sequences with zeros and builds a batch."""
