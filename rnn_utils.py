@@ -4,6 +4,11 @@
 import torch
 
 
+_EOS = '.'
+_SOS = '?'
+_PAD = '#'
+
+
 def make_1hot(char, token2pos, vocab_size):
 	"""Given a char, vocabulary size and a dictionary associating each
 	char to an index, builds a 1-hot representation of the char."""
@@ -25,10 +30,10 @@ def make_target_tensor(target, token2pos, vocab_size):
     """Given a target sequence, vocabulary size and a dictionary associating each
     char to an index, builds a tensor representation of the target sequence."""
     target_tensor = []
-    target_tensor.append(make_1hot('sos', token2pos, vocab_size))
+    target_tensor.append(make_1hot(_SOS, token2pos, vocab_size))
     for c in target:
         target_tensor.append(make_1hot(c, token2pos, vocab_size))
-    target_tensor.append(make_1hot('eos', token2pos, vocab_size))
+    target_tensor.append(make_1hot(_EOS, token2pos, vocab_size))
     return torch.concat(target_tensor).unsqueeze(dim=0)
 
 
