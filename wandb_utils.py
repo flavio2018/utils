@@ -72,14 +72,23 @@ def log_buffers_norm(model, step):
 
 def log_intermediate_values_norm(model, step):
         wandb.log({
-                "q": torch.norm(model.memory.query),
-                "beta": torch.norm(model.memory.sharpening_beta),
-                "w_tilde": torch.norm(model.memory.similarity_vector),
-                "gamma": torch.norm(model.memory.lru_gamma),
-                "w_hat": torch.norm(model.memory.lru_similarity_vector),
-                "v": torch.norm(model.memory.exp_mov_avg_similarity),
-                "w_r": torch.norm(model.memory.read_weights),
-                "w_w": torch.norm(model.memory.write_weights),
+                # read head
+                "q_r": torch.norm(model.memory.read_head.query),
+                "beta_r": torch.norm(model.memory.read_head.sharpening_beta),
+                "w_tilde_r": torch.norm(model.memory.read_head.similarity_vector),
+                "gamma_r": torch.norm(model.memory.read_head.lru_gamma),
+                "w_hat_r": torch.norm(model.memory.read_head.lru_similarity_vector),
+                "v_r": torch.norm(model.memory.read_head.exp_mov_avg_similarity),
+                "w_r": torch.norm(model.memory.read_head.read_weights),
+                # write head
+                "q_w": torch.norm(model.memory.write_head.query),
+                "beta_w": torch.norm(model.memory.write_head.sharpening_beta),
+                "w_tilde_w": torch.norm(model.memory.write_head.similarity_vector),
+                "gamma_": torch.norm(model.memory.write_head.lru_gamma),
+                "w_hat_w": torch.norm(model.memory.write_head.lru_similarity_vector),
+                "v_w": torch.norm(model.memory.write_head.exp_mov_avg_similarity),
+                "w_w": torch.norm(model.memory.write_head.write_weights),
+                # memory
                 "e": torch.norm(model.memory.erase_vector),
                 "alpha": torch.norm(model.memory.alpha),
                 "c": torch.norm(model.memory.candidate_content_vector),
