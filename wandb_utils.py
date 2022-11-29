@@ -83,7 +83,7 @@ def log_intermediate_values_norm(model, step):
                 "q_w": torch.norm(model.memory.write_head.query),
                 "beta_w": torch.norm(model.memory.write_head.sharpening_beta),
                 "w_tilde_w": torch.norm(model.memory.write_head.similarity_vector),
-                "gamma_": torch.norm(model.memory.write_head.lru_gamma),
+                "gamma_w": torch.norm(model.memory.write_head.lru_gamma),
                 "w_hat_w": torch.norm(model.memory.write_head.lru_similarity_vector),
                 "v_w": torch.norm(model.memory.write_head.exp_mov_avg_similarity),
                 # memory
