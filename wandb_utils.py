@@ -79,7 +79,6 @@ def log_intermediate_values_norm(model, step):
                 "gamma_r": torch.norm(model.memory.read_head.lru_gamma),
                 "w_hat_r": torch.norm(model.memory.read_head.lru_similarity_vector),
                 "v_r": torch.norm(model.memory.read_head.exp_mov_avg_similarity),
-                "w_r": torch.norm(model.memory.read_head.read_weights),
                 # write head
                 "q_w": torch.norm(model.memory.write_head.query),
                 "beta_w": torch.norm(model.memory.write_head.sharpening_beta),
@@ -87,8 +86,9 @@ def log_intermediate_values_norm(model, step):
                 "gamma_": torch.norm(model.memory.write_head.lru_gamma),
                 "w_hat_w": torch.norm(model.memory.write_head.lru_similarity_vector),
                 "v_w": torch.norm(model.memory.write_head.exp_mov_avg_similarity),
-                "w_w": torch.norm(model.memory.write_head.write_weights),
                 # memory
+                "w_r": torch.norm(model.memory.read_weights),
+                "w_w": torch.norm(model.memory.write_weights),
                 "e": torch.norm(model.memory.erase_vector),
                 "alpha": torch.norm(model.memory.alpha),
                 "c": torch.norm(model.memory.candidate_content_vector),
