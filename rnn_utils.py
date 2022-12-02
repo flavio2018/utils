@@ -4,6 +4,12 @@
 import torch
 
 
+def get_mask(lens, device='cpu'):
+       """Given a list of lengths of sequences, create a tensor mask that signals
+       the sequences that reached padded positions."""
+       return torch.tensor([1 if l > 0 else 0 for l in lens], device=device)
+
+
 def reduce_lens(lens):
 	"""Given a list of lengths of sequences in a batch, reduce each length
 	up to zero to keep track of valid and padded positions."""
